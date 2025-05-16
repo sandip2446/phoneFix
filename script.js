@@ -95,6 +95,12 @@ function collapseDetails(button, details) {
     details.classList.remove('active');
     details.setAttribute('aria-hidden', 'true');
     
+    // Remove show less button if it exists
+    const showLessBtn = details.querySelector('.show-less-btn');
+    if (showLessBtn) {
+        showLessBtn.remove();
+    }
+    
     // Announce the change
     announceContentUpdate('Details collapsed');
 }
@@ -119,6 +125,19 @@ function expandDetails(button, details) {
     // Update details visibility
     details.classList.add('active');
     details.setAttribute('aria-hidden', 'false');
+    
+    // Add show less button if it doesn't exist
+    if (!details.querySelector('.show-less-btn')) {
+        const showLessBtn = document.createElement('button');
+        showLessBtn.className = 'show-less-btn';
+        showLessBtn.textContent = 'Show Less';
+        showLessBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            collapseDetails(button, details);
+        });
+        details.appendChild(showLessBtn);
+    }
     
     // Announce the change
     announceContentUpdate('Details expanded');
@@ -418,7 +437,7 @@ function initializeEventListeners() {
                 if (!details.querySelector('.hide-details-btn')) {
                     const hideBtn = document.createElement('button');
                     hideBtn.className = 'hide-details-btn';
-                    hideBtn.innerHTML = '<i class="fas fa-arrow-down"></i> Hide Details';
+                    hideBtn.innerHTML = '<span><i class="fas fa-chevron-up"></i> Hide Details</span>';
                     hideBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
